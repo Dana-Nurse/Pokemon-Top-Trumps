@@ -1,0 +1,224 @@
+import random
+import requests
+import csv
+from csv import DictWriter
+import pandas as pd
+import os.path
+
+
+# import ascii_magic #to allow printing ascii sprite to console
+# from ascii_magic import AsciiArt
+
+
+# [YJ] 1. Generate a random number between 1 and 151 to use as the Pokemon ID number
+def random_pokemon_num():
+    pokemon_ID = random.randint(1, 151)
+    return pokemon_ID
+
+
+# [YJ] 2. Using the Pokemon API get a Pokemon based on its ID number
+def get_pokemon(pkmonid):
+    response = requests.get('https://pokeapi.co/api/v2/pokemon/{}/'.format(pkmonid))
+    pkmon = response.json()
+    return (pkmon)
+
+
+# [Patricia] 3. Create a dictionary that contains the returned Pokemon's name, id, weight and height
+
+# Basic Pokemon dictionary
+def create_pokemon_dict(pokemon):
+    return {
+        'name': pokemon['name'],
+        '1': pokemon['id'],
+        '2': pokemon['height'],
+        '3': pokemon['weight'],
+    }
+
+
+# Extended Pokemon dictionary containing additional stats and pokemon sprite
+def create_pokeman_dict_adv(pokemon):
+    return {
+        'name': pokemon['name'],
+        '1': pokemon['stats'][0]['base_stat'],
+        '2': pokemon['stats'][1]['base_stat'],
+        '3': pokemon['stats'][2]['base_stat'],
+        '4': pokemon['stats'][3]['base_stat'],
+        '5': pokemon['stats'][4]['base_stat'],
+        '6': pokemon['stats'][5]['base_stat'],
+        'sprite': pokemon['sprites']['front_default']
+    }
+
+
+# [YJ] Basic game
+def random_pokemon():
+    rid = random_pokemon_num()
+    pmon = get_pokemon(rid)
+    pchoice = create_pokemon_dict(pmon)
+    return pchoice
+
+
+# [Nicola] 4. Get a random Pokemon for the player and another for their opponent
+# 5. Ask the user which stat they want to use (id, height or weight)
+def run():
+    my_pokemon = random_pokemon()
+    print('\nYou were given: {}\n'.format(my_pokemon['name']))
+    stat_choice = input('Which stat do you want to use?\n 1: ID\n 2: Height\n 3: Weight\n ')
+    opponent_pokemon = random_pokemon()
+    print('\nThe opponent chose {}\n'.format(opponent_pokemon['name']))
+    my_stat = my_pokemon[stat_choice]
+    opponent_stat = opponent_pokemon[stat_choice]
+
+    # [Dana] 6. Compare the player's and opponent's Pokemon on the chosen stat to decide who wins
+    if my_stat > opponent_stat:
+        print('*** You Win ***')
+    elif my_stat < opponent_stat:
+        print('*** You Lose ***')
+    else:
+        print("It's a draw")
+
+
+# Advanced game version
+def random_pokemon2():
+    rid = random_pokemon_num()
+    pmon = get_pokemon(rid)
+    pchoice2 = create_pokeman_dict_adv(pmon)
+    return pchoice2
+
+
+def play():
+    P1_totalscore = 0
+    P2_totalscore = 0
+
+    # 7. For loop to play 3 rounds of the game
+    for game in range(3):
+        # 8. choice of 3 random pokemon from the advanced game random_pokemon function
+        print('\nYou were given the following Pokemon options:')
+        pokemon_choice1 = random_pokemon2()
+        print('1: ' + pokemon_choice1['name'])
+        pokemon_choice2 = random_pokemon2()
+        print('2: ' + pokemon_choice2['name'])
+        pokemon_choice3 = random_pokemon2()
+        print('3: ' + pokemon_choice3['name'])
+
+        # prints Player 1's pokemon choice after they've selected it using the input function
+        player1_choice = input('Pick a pokemon: [1/2/3] ')
+        if player1_choice == '1':
+            player1_pokemon = pokemon_choice1
+            print('\nYou picked: ' + pokemon_choice1['name'])
+        elif player1_choice == '2':
+            player1_pokemon = pokemon_choice2
+            print('\nYou picked: ' + pokemon_choice2['name'])
+        elif player1_choice == '3':
+            player1_pokemon = pokemon_choice3
+            print('\nYou picked: ' + pokemon_choice3['name'])
+
+        # assigns random pokemon to player 2 (computer)
+        player2_pokemon = random_pokemon2()
+        print('\nPlayer 2 Picked: {}\n'.format(player2_pokemon['name']))
+        # stat_choice = input('Select a stat: \n 1: hp\n 2: attack\n 3: defense\n 4: special-attack\n 5: special-defense\n 6: speed\n')
+        # Prints available stat choices to show player 1
+        print(
+            'Stat choices are: \n 1: hp\n 2: attack\n 3: defense\n 4: special-attack\n 5: special-defense\n 6: speed\n')
+
+        # 9. Player 2 selects random stat
+        stat_choice = str(random.randint(1, 6))
+        # prints stat name based on random integer to show player 1 which stat was picked
+        if stat_choice == '1':
+            print('Player 2 chose the hp stat\n')
+        if stat_choice == '2':
+            print('Player 2 chose the attack stat\n')
+        if stat_choice == '3':
+            print('Player 2 chose the defense stat\n')
+        if stat_choice == '4':
+            print('Player 2 chose the special-attack stat\n')
+        if stat_choice == '5':
+            print('Player 2 chose the special-defense stat\n')
+        if stat_choice == '6':
+            print('Player 2 chose the speed stat\n')
+
+        # player 1 has the option to use that stat or select their own
+        stat_check = input('Do you want to continue (y) or select your own stat (n)? ')
+        if stat_check == 'n':
+            stat_choice = input(
+                '\nSelect a stat: \n1: hp\n2: attack\n3: defense\n4: special-attack\n5: special-defense\n6: speed\n')
+
+        # pulls the stat for the selected pokemon for player 1 and 2
+        player1_stat = player1_pokemon[stat_choice]
+        # player1_sprite = player1_pokemon['sprite']
+        # player1_sprite = AsciiArt.from_url(player1_pokemon['sprite'])
+
+        player2_stat = player2_pokemon[stat_choice]
+        # player2_sprite = player2_pokemon['sprite']
+        # player2_sprite = AsciiArt.from_url(player2_pokemon['sprite'])
+
+        # Compare the player's and opponent's Pokemon on the chosen stat to decide who wins. Winner gets points based on the difference between the 2 stats. Sprite of winning pokemon printed
+        if player1_stat > player2_stat:
+            print('\n*** You win this round ***')
+            P1_totalscore += player1_stat - player2_stat
+            # os.startfile(player1_sprite)    #10. Print pokemon sprite
+            # player1_sprite.to_terminal()
+        if player1_stat < player2_stat:
+            print('\n*** You lose this round ***')
+            P2_totalscore += player2_stat - player1_stat
+            # os.startfile(player2_sprite)
+            # player2_sprite.to_terminal()
+        if player1_stat == player2_stat:
+            print('\n*** This round was a draw ***')
+
+        # total scores from current and previous rounds are printed
+        print(f'\nPlayer 1 Score: {P1_totalscore}')
+        print(f'Player 2 Score: {P2_totalscore}')
+
+        # stops game after 3 rounds
+        if game == 3:
+            break
+
+    # 11. Keep score of multiple rounds, winner based on final score
+    if P1_totalscore > P2_totalscore:
+        print('\n*** You Win ***')
+
+    if P1_totalscore < P2_totalscore:
+        print('\n*** You Lose ***')
+
+    # total score for player 1 is saved in a csv file which is sorted from highest to lowest score
+    headers = ['Player Name', 'High Score']
+    player_name = input('Enter name: ')
+    print(player_name + "'s Score: {}".format(P1_totalscore))
+
+    data = {'Player Name': player_name, 'High Score': P1_totalscore}
+
+    path = 'pokemon_scores.csv'
+    if os.path.exists(path):
+        with open('pokemon_scores.csv', 'a') as csv_file:
+            dictwriter_score = DictWriter(csv_file, fieldnames=headers)
+            dictwriter_score.writerow(data)
+            csv_file.close()
+            df = pd.read_csv('pokemon_scores.csv')
+            sorted_df = df.sort_values(by=['High Score'], ascending=False)
+            sorted_df.to_csv('pokemon_scores_sorted.csv', index=False)
+    else:
+        with open('pokemon_scores.csv', 'w') as csv_file:
+            csvheader = csv.DictWriter(csv_file, delimiter=',',
+                                       fieldnames=headers)
+            csvheader.writeheader()
+        with open('pokemon_scores.csv', 'a') as csv_file:
+            dictwriter_score = DictWriter(csv_file, fieldnames=headers)
+            dictwriter_score.writerow(data)
+            csv_file.close()
+
+
+# [YJ] runs basic or advanced game based on player choice
+def menu():
+    ans = 'y'
+    while ans == 'y':
+        print('Choose \n1: Basic \n2: Advanced')
+        choice = input()
+        if choice == '1':
+            run()
+        else:
+            play()
+
+        ans = input('\nDo you want to play again? Enter y (yes) or n (no):   ')
+
+
+menu()
