@@ -10,20 +10,20 @@ import os.path
 # from ascii_magic import AsciiArt
 
 
-# [YJ] 1. Generate a random number between 1 and 151 to use as the Pokemon ID number
+#1. Generate a random number between 1 and 151 to use as the Pokemon ID number
 def random_pokemon_num():
     pokemon_ID = random.randint(1, 151)
     return pokemon_ID
 
 
-# [YJ] 2. Using the Pokemon API get a Pokemon based on its ID number
+#2. Using the Pokemon API get a Pokemon based on its ID number
 def get_pokemon(pkmonid):
     response = requests.get('https://pokeapi.co/api/v2/pokemon/{}/'.format(pkmonid))
     pkmon = response.json()
     return (pkmon)
 
 
-# [Patricia] 3. Create a dictionary that contains the returned Pokemon's name, id, weight and height
+#3. Create a dictionary that contains the returned Pokemon's name, id, weight and height
 
 # Basic Pokemon dictionary
 def create_pokemon_dict(pokemon):
@@ -49,7 +49,7 @@ def create_pokeman_dict_adv(pokemon):
     }
 
 
-# [YJ] Basic game
+#Basic game
 def random_pokemon():
     rid = random_pokemon_num()
     pmon = get_pokemon(rid)
@@ -57,7 +57,7 @@ def random_pokemon():
     return pchoice
 
 
-# [Nicola] 4. Get a random Pokemon for the player and another for their opponent
+# 4. Get a random Pokemon for the player and another for their opponent
 # 5. Ask the user which stat they want to use (id, height or weight)
 def run():
     my_pokemon = random_pokemon()
@@ -207,7 +207,7 @@ def play():
             csv_file.close()
 
 
-# [YJ] runs basic or advanced game based on player choice
+#Run basic or advanced game based on player choice
 def menu():
     ans = 'y'
     while ans == 'y':
