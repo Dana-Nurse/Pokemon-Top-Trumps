@@ -1,5 +1,4 @@
-#Option [3]
-#Project Brief: Spreadsheet Analysis
+#Project Brief: Data Analysis & Visualisation Spreadsheet
 import pandas as pd
 # Read data from a CSV file
 csv_file_path = 'D:\Python\sales.csv'
@@ -94,8 +93,6 @@ formatted_average = locale.format_string('%.2f', average_for_sector , grouping=T
 formatted_average = '£' + formatted_average
 
 print(f"Average for {sector_name}: {formatted_average}")
-
-######################################
 
 # Python program to illustrate
 # Plotting categorical scatter
