@@ -1,0 +1,80 @@
+import random
+
+import requests
+
+#import ascii_magic
+
+#from ascii_magic import AsciiArt
+
+def random_pokemon():
+    pokemon_id = random.randint(1, 151)
+    response = requests.get('https://pokeapi.co/api/v2/pokemon/{}/'.format(pokemon_id))
+    pokemon = response.json()
+
+    return {
+        'name': pokemon['name'],
+        '1': pokemon['stats'][0]['base_stat'],
+        '2': pokemon['stats'][1]['base_stat'],
+        '3': pokemon['stats'][2]['base_stat'],
+        '4': pokemon['stats'][3]['base_stat'],
+        '5': pokemon['stats'][4]['base_stat'],
+        '6': pokemon['stats'][5]['base_stat'],
+        'sprite': pokemon['sprites']['front_default']
+    }
+
+def play():
+    P1_totalscore = 0
+    P2_totalscore = 0
+
+    while P1_totalscore < 2 and P2_totalscore < 2:
+        pokemon_choice1 = random_pokemon()
+        print('1. ' + pokemon_choice1['name'])
+        pokemon_choice2 = random_pokemon()
+        print('2. ' + pokemon_choice2['name'])
+        pokemon_choice3 = random_pokemon()
+        print('3. ' + pokemon_choice3['name'])
+
+        player1_choice = input('pick a pokemon: [1/2/3] ')
+        if player1_choice == '1':
+            player1_pokemon = pokemon_choice1
+            print('You picked: ' + pokemon_choice1['name'])
+        elif player1_choice == '2':
+            player1_pokemon = pokemon_choice2
+            print('You picked: ' + pokemon_choice2['name'])
+        elif player1_choice == '3':
+            player1_pokemon = pokemon_choice3
+            print('You picked: ' + pokemon_choice3['name'])
+
+        stat_choice = input('Select a stat for {}:\n 1. hp\n 2. attack\n 3. defense\n 4. special-attack\n 5. special-defense\n 6. speed\n --> '.format(player1_pokemon['name']))
+
+        player2_pokemon = random_pokemon()
+        print('\nPlayer 2 Picked: {}\n'.format(player2_pokemon['name']))
+
+        player1_stat = player1_pokemon[stat_choice]
+        #player1_sprite = AsciiArt.from_url(player1_pokemon['sprite'])
+        player2_stat = player2_pokemon[stat_choice]
+        #player2_sprite = AsciiArt.from_url(player2_pokemon['sprite'])
+
+        if player1_stat > player2_stat:
+            print('*** You win this round ***')
+            P1_totalscore += 1
+            #player1_sprite.to_terminal()
+        if player1_stat < player2_stat:
+            print('*** You lose this round ***')
+            P2_totalscore += 1
+            #player2_sprite.to_terminal()
+        if player1_stat == player2_stat:
+            print('*** This round was a draw ***')
+
+        print(f'Player 1 Score: {P1_totalscore}')
+        print(f'Player 2 Score: {P2_totalscore}')
+
+        if P1_totalscore == 2 or P2_totalscore == 2:
+            break
+
+    if P1_totalscore > P2_totalscore:
+        print('*** You Win ***')
+    if P1_totalscore < P2_totalscore:
+        print('*** You Lose ***')
+
+play()
